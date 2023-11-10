@@ -11,6 +11,7 @@ return [
         'add_field'         => '添加欄位',
         'pk'                => '主鍵',
         'soft_delete'       => '軟刪除',
+        'conn_name'         => '連接名',
         'create_migration'  => '創建表遷移文件',
         'create_model'      => '創建模型',
         'create_repository' => '創建數據倉庫',

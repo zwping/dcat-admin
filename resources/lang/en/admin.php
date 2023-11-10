@@ -11,6 +11,7 @@ return [
         'add_field'         => 'Add field',
         'pk'                => 'Primary key',
         'soft_delete'       => 'Soft delete',
+        'conn_name'         => 'Connection Name',
         'create_migration'  => 'Create migration',
         'create_model'      => 'Create model',
         'create_repository' => 'Create repository',

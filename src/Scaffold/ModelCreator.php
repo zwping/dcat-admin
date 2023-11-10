@@ -9,6 +9,13 @@ use Illuminate\Support\Str;
 class ModelCreator
 {
     /**
+     * connection name.
+     *
+     * @var string
+     */
+    protected $connName;
+
+    /**
      * Table name.
      *
      * @var string
@@ -32,12 +39,15 @@ class ModelCreator
     /**
      * ModelCreator constructor.
      *
+     * @param  string  $connName
      * @param  string  $tableName
      * @param  string  $name
      * @param  null  $files
      */
-    public function __construct($tableName, $name, $files = null)
+    public function __construct($connName, $tableName, $name, $files = null)
     {
+        $this->connName = $connName;
+        
         $this->tableName = $tableName;
 
         $this->name = $name;
@@ -55,7 +65,7 @@ class ModelCreator
      *
      * @throws \Exception
      */
-    public function create($keyName = 'id', $timestamps = true, $softDeletes = false)
+    public function create($keyName = 'id', $timestamps = true, $softDeletes = false, $connNames = false)
     {
         $path = $this->getpath($this->name);
         $dir = dirname($path);
@@ -76,6 +86,7 @@ class ModelCreator
             ->replaceDatetimeFormatter($stub)
             ->replaceTable($stub, $this->name)
             ->replaceTimestamp($stub, $timestamps)
+            ->replaceConnectionName($stub, $connNames)
             ->replacePrimaryKey($stub, $keyName)
             ->replaceSpace($stub);
 
@@ -158,6 +169,22 @@ class ModelCreator
         }
 
         $stub = str_replace(['DummyImportSoftDeletesTrait', 'DummyUseSoftDeletesTrait'], [$import, $use], $stub);
+
+        return $this;
+    }
+
+    /**
+     * Replace connectionName dummy.
+     *
+     * @param  string  $stub
+     * @param  bool  $connNames
+     * @return $this
+     */
+    protected function replaceConnectionName(&$stub, $connNames)
+    {
+        $name = $connNames ? "protected \$connection = '$this->connName';" : "\n";
+
+        $stub = str_replace('DummyConnName', $name, $stub);
 
         return $this;
     }

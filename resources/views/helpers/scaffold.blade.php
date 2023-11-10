@@ -8,6 +8,12 @@
         $soft->check(1);
     }
 
+    $connName = Dcat\Admin\Widgets\Checkbox::make('conn_names')->inline();
+    $connName->options([1 => (trans('admin.scaffold.conn_name'))]);
+    if (old('conn_names') != NULL) {
+        $connName->check(1);
+    }
+
     $actionCreators = Dcat\Admin\Widgets\Checkbox::make('create[]')->inline();
     $actionCreators->options([
         'migration' => (trans('admin.scaffold.create_migration')),
@@ -47,6 +53,13 @@
                     <div class="col-sm-2 ">
                         <div class="input-group">
                             <input type="text" name="table_name" class="form-control" id="inputTableName" placeholder="{{(trans('admin.scaffold.table'))}}" value="{{ old('table_name') }}">
+
+                        </div>
+                    </div>
+
+                    <div class="col-sm-2 ">
+                        <div class="input-group">
+                            <input type="text" name="conn_name" class="form-control" id="inputConnName" placeholder="{{(trans('admin.scaffold.conn_name'))}}" value="{{ old('conn_name') }}">
 
                         </div>
                     </div>
@@ -238,6 +251,7 @@
                     <div class='form-group text-capitalize'>
                         {!! $timestamps->render() !!}
                         {!! $soft->render() !!}
+                        {!! $connName->render() !!}
                     </div>
 
                 </div>
@@ -303,6 +317,7 @@
             $controller = $('#inputControllerName'),
             $repository = $('#inputRepositoryName'),
             $table = $('#inputTableName'),
+            $connName = $('#inputConnName'),
             $fieldsBody = $('#table-fields tbody'),
             tpl = $('#table-field-tpl').html(),
             modelNamespace = 'App\\Models\\',
@@ -375,18 +390,20 @@
         });
 
         $('.choose-exist-table').on('change', function () {
-            var val = $(this).val(), tb, db;
+            var val = $(this).val(), tb, db, name;
             if (val == '0') {
                 $table.val('');
                 getTR().remove();
                 return;
             }
             val = val.split('|');
-            db = val[0];
-            tb = val[1];
+            name = val[0];
+            db = val[1];
+            tb = val[2];
 
             Dcat.loading();
             $table.val(tb);
+            $connName.val(name);
 
             withSingularName(tb);
 

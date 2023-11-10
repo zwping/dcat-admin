@@ -112,6 +112,7 @@ class ScaffoldController extends Controller
         $message = '';
 
         $creates = (array) $request->get('create');
+        $connName = $request->get('conn_name');
         $table = Helper::slug($request->get('table_name'), '_');
         $controller = $request->get('controller_name');
         $model = $request->get('model_name');
@@ -120,12 +121,13 @@ class ScaffoldController extends Controller
         try {
             // 1. Create model.
             if (in_array('model', $creates)) {
-                $modelCreator = new ModelCreator($table, $model);
+                $modelCreator = new ModelCreator($connName, $table, $model);
 
                 $paths['model'] = $modelCreator->create(
                     $request->get('primary_key'),
                     $request->get('timestamps') == 1,
-                    $request->get('soft_deletes') == 1
+                    $request->get('soft_deletes') == 1,
+                    $request->get('conn_names') == 1
                 );
             }
 
@@ -193,7 +195,12 @@ class ScaffoldController extends Controller
             return ['status' => 1, 'list' => []];
         }
 
-        $tables = collect($this->getDatabaseColumns($db, $table))
+        $columns = $this->getDatabaseColumns($db, $table);
+        foreach($columns as $k=>$v) {
+            $columns[explode('|',$k)[1]] = $v;
+            unset($columns[$k]);
+        }
+        $tables = collect($columns)
             ->filter(function ($v, $k) use ($db) {
                 return $k == $db;
             })->map(function ($v) use ($table) {
@@ -247,7 +254,8 @@ class ScaffoldController extends Controller
                     return $v;
                 });
 
-                $data[$value['database']] = $collection->groupBy('TABLE_NAME')->map(function ($v) {
+                $data[$connectName.'|'.$value['database']] = $collection->groupBy('TABLE_NAME')->map(function ($v) {
+                // $data[$value['database']] = $collection->groupBy('TABLE_NAME')->map(function ($v) {
                     return collect($v)->keyBy('COLUMN_NAME')->map(function ($v) {
                         $v['COLUMN_TYPE'] = strtolower($v['COLUMN_TYPE']);
                         $v['DATA_TYPE'] = strtolower($v['DATA_TYPE']);

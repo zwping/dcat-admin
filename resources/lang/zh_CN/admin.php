@@ -11,6 +11,7 @@ return [
         'add_field'         => '添加字段',
         'pk'                => '主键',
         'soft_delete'       => '软删除',
+        'conn_name'         => '连接名',
         'create_migration'  => '创建表迁移文件',
         'create_model'      => '创建模型',
         'create_repository' => '创建数据仓库',
