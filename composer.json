@@ -1,5 +1,5 @@
 {
-    "name": "dcat/laravel-admin",
+    "name": "zwping/dcat-admin",
     "description": "dcat admin",
     "type": "library",
     "keywords": ["dcat", "laravel", "admin", "grid", "form", "laravel admin"],
@@ -7,8 +7,8 @@
     "license": "MIT",
     "authors": [
         {
-            "name": "jqh",
-            "email": "841324345@qq.com"
+            "name": "zwping",
+            "email": "1101558280@qq.com"
         }
     ],
     "require": {
